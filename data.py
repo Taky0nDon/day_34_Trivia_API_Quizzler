@@ -1,3 +1,26 @@
+import requests
+import json
+
+URL = "https://opentdb.com/api.php"
+TOKEN_URL = "https://opentdb.com/api_token.php"
+
+token = requests.get(TOKEN_URL)
+token.raise_for_status()
+
+parameters = {
+    "type": "boolean",
+    "amount": "10",
+    "token": token
+}
+
+response = requests.get("https://opentdb.com/api.php?amount=10&type=boolean", parameters)
+response.raise_for_status()
+
+json_data = response.json()
+with open("trivia_response.txt", "w") as outputfile:
+    json.dump(json_data, outputfile, indent=2)
+question_data = json_data["results"]
+
 # question_data = [
 #     {
 #         "category": "Science: Computers",
