@@ -54,11 +54,12 @@ class QuizInterface:
     def get_next_question(self) -> None:
         self.question_canvas.config(bg="white")
         if self.quiz_object.still_has_questions():
-            q_text = self.quiz_object.next_question()  # gets the text returned by the quiz_object next_question() method.
+            q_text = self.quiz_object.next_question()
             self.question_canvas.itemconfig(self.canvas_question_text,
                                             text=q_text)  # modifies the canvas text with the text returned above
         else:
             self.end_game()
+
     def submit_answer(self, answer: str) -> None:
         """changes the canvas background color to green if self.quiz_object.check_answer() returns True, red if it
         return False"""
@@ -81,15 +82,21 @@ class QuizInterface:
     def get_category_choice(self):
         self.selection = self.category_choices.get()
         print(self.selection)
+
     def change_category(self):
+        # todo create a new method to reset the state of the game when a new category is selected
         cat_str = self.category_choices.get()
         new_category = data.get_category_id(cat_str)
-        if new_category == None:
+        new_question_bank = data.give_questions_to_user(new_category)
+        if new_category is None:
             self.question_canvas.itemconfig(self.canvas_question_text, text="You have not chosen a category")
+        elif len(new_question_bank) < 1:
+            no_questions_to_display = tk.messagebox.showerror(title="Insufficient questions!",
+                                                              message=f"There are no questions in {cat_str}!")
+            self.get_next_question()
         else:
             alert = tk.messagebox.showinfo(title="New category selected!",
                                            message=f"Now displaying questions pertaining to {cat_str}.")
-            new_questions = data.give_questions_to_user(new_category)
-            print(f"{data.parameters=}")
-            self.quiz_object = quiz_brain.QuizBrain(new_questions)
+
+            self.quiz_object = quiz_brain.QuizBrain(new_question_bank)
             self.get_next_question()
