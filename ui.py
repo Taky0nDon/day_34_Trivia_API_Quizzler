@@ -23,7 +23,7 @@ class QuizInterface:
 
         self.category_choices = ttk.Combobox(
             state="readonly",
-            values=data.list_of_categories
+            values=data.get_cat_strings()
         )
         self.category_choices.grid(column=0, row=0)
 

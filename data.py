@@ -39,15 +39,15 @@ def get_questions_from_API(parameters=None):
     print(f"{data=}")
     question_data = data["results"]
     return question_data
-
-with open("categories.txt", "r") as category_file:
-    list_of_categories = category_file.readlines()
-i = 0
-for item in list_of_categories:
-    item = item.strip("\n")
-    list_of_categories[i] = item
-    i += 1
-json_data = get_questions_from_API(parameters=parameters)
+def get_cat_strings():
+    with open("categories.txt", "r") as category_file:
+        list_of_categories = category_file.readlines()
+    i = 0
+    for item in list_of_categories:
+        item = item.strip("\n")
+        list_of_categories[i] = item
+        i += 1
+    return list_of_categories
 # question_data = json_data["results"]
 
 # question_data = [
