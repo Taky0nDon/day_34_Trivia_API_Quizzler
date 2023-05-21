@@ -1,6 +1,8 @@
+# import tkinter.messagebox
+from tkinter import ttk, messagebox
 import tkinter as tk
 import quiz_brain
-import time
+import data
 
 THEME_COLOR = "#375362"
 QUESTION_FONT = ("Arial", 20, "italic")
@@ -10,6 +12,7 @@ QUESTION_FONT = ("Arial", 20, "italic")
 class QuizInterface:
 
     def __init__(self, quiz_object: quiz_brain.QuizBrain):
+        self.selection = None
         self.quiz_object = quiz_object
         self.window = tk.Tk()
         self.window.title = "Quizzler"
@@ -18,6 +21,15 @@ class QuizInterface:
         self.cross_image = tk.PhotoImage(file="./images/false.png")
         self.check_image = tk.PhotoImage(file="images/true.png")
 
+        self.category_choices = ttk.Combobox(
+            state="readonly",
+            values=data.list_of_categories
+        )
+        self.category_choices.grid(column=0, row=0)
+
+        self.change_cat_but = tk.Button(text="Pick New Category", command=self.change_category)
+        self.change_cat_but.grid(column=0, row=1)
+
         self.score_label = tk.Label(text="Score: 0/0", bg=THEME_COLOR, font=("Arial", 14, "normal"), fg="white")
         self.score_label.grid(column=1, row=0)
 # todo: make the canvas reactive? so it gets bigger if the text takes up too much space.
@@ -25,15 +37,15 @@ class QuizInterface:
         self.canvas_question_text = self.question_canvas.create_text((150, 150), text="place holder",
                                                                      font=QUESTION_FONT, width=250, justify="center",
                                                                      fill=THEME_COLOR)
-        self.question_canvas.grid(column=0, columnspan=2, row=1, pady=50)
+        self.question_canvas.grid(column=0, columnspan=2, row=2, pady=50)
 
         self.check_button = tk.Button(image=self.check_image, padx=20, borderwidth=0, highlightthickness=0,
                                       command=lambda: self.submit_answer("true"))
-        self.check_button.grid(column=0, row=2)
+        self.check_button.grid(column=0, row=3)
 
         self.cross_button = tk.Button(image=self.cross_image, padx=20, borderwidth=0, highlightthickness=0,
                                       command=lambda: self.submit_answer("false"))
-        self.cross_button.grid(column=1, row=2)
+        self.cross_button.grid(column=1, row=3)
 
         self.get_next_question()
 
@@ -65,3 +77,19 @@ class QuizInterface:
         self.question_canvas.itemconfig(self.canvas_question_text, text="You have completed the quiz!")
         self.check_button.config(state="disabled")
         self.cross_button.config(state="disabled")
+
+    def get_category_choice(self):
+        self.selection = self.category_choices.get()
+        print(self.selection)
+    def change_category(self):
+        cat_str = self.category_choices.get()
+        new_category = data.get_category_id(cat_str)
+        if new_category == None:
+            self.question_canvas.itemconfig(self.canvas_question_text, text="You have not chosen a category")
+        else:
+            alert = tk.messagebox.showinfo(title="New category selected!",
+                                           message=f"Now displaying questions pertaining to {cat_str}.")
+            new_questions = data.give_questions_to_user(new_category)
+            print(f"{data.parameters=}")
+            self.quiz_object = quiz_brain.QuizBrain(new_questions)
+            self.get_next_question()

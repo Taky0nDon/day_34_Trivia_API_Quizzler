@@ -3,14 +3,19 @@ import html
 class QuizBrain:
 
     def __init__(self, q_list):
+        print(q_list)
         self.question_number = 0
         self.score = 0
         self.question_list = q_list
         self.current_question = None
 
+    def return_question_list(self):
+        pass
+
     def still_has_questions(self) -> bool:
         """returns True if less questions have been displayed than the total questions
         in the question list, else False"""
+        print(f"{self.question_number=}, {len(self.question_list)=}")
         return self.question_number < len(self.question_list)
 
     def next_question(self):

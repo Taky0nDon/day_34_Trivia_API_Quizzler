@@ -1,23 +1,8 @@
-from question_model import Question
-from data import question_data
+import data
 from quiz_brain import QuizBrain
 import ui
-import html
-# import solution as ui
-
-question_bank = []
-for question in question_data:
-    question_text = html.unescape(question["question"])
-    question_answer = question["correct_answer"]
-    new_question = Question(question_text, question_answer)
-    question_bank.append(new_question)
 
 
-quiz = QuizBrain(question_bank)
+
+quiz = QuizBrain(data.give_questions_to_user(category_id=None))
 quiz_ui = ui.QuizInterface(quiz)  # passing the QuizBrain instance to the quiz_ui
-
-# while quiz.still_has_questions():
-#     quiz.next_question()
-
-print("You've completed the quiz")
-print(f"Your final score was: {quiz.score}/{quiz.question_number}")
