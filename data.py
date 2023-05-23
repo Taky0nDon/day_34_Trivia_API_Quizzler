@@ -51,7 +51,8 @@ def get_questions_from_API(params=None):
     return question_data
 
 
-def get_cat_strings():
+def get_cat_strings() -> list[str]:
+    """Returns a list of strings, each string being the category name to display in the combobox"""
     with open("categories.txt", "r") as category_file:
         list_of_categories = category_file.readlines()
     i = 0
